@@ -1,5 +1,6 @@
 package apiTests.day03;
 
+import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
@@ -123,9 +124,33 @@ public class UserGetRequestWithPathMethod {
 
         Object thirdUserSecondSkill = response.path("skills[2][1]");
         System.out.println("thirdUserSecondSkill = " + thirdUserSecondSkill);
+    }
 
+    @Test
+    public void bookStoreFirstUserVerification(){
+        /*
+    Given accept type json
+    When user sends a get request to https://bookstore.toolsqa.com/BookStore/v1/Books
+    Then status code should be 200
+    And content type should be application/json; charset=utf-8
+    And the first book isbn should be 9781449325862
+    And the first book publisher should be O'Reilly Media
 
+     */
 
+        Response response = RestAssured.given().accept(ContentType.JSON)
+                .when().get("https://bookstore.toolsqa.com/BookStore/v1/Books");
+
+        Assert.assertEquals(response.statusCode(), 200);
+        assertEquals(response.contentType(), "application/json; charset=utf-8");
+
+        String  actualIsbn = response.path("books.isbn[0]");
+        String expectedIsbn = "9781449325862";
+        assertEquals(actualIsbn,expectedIsbn);
+
+        String actualPublisher = response.path("books.publisher[0]");
+        String expectedPublisher = "O'Reilly Media";
+        assertEquals(actualPublisher,expectedPublisher);
 
     }
 
